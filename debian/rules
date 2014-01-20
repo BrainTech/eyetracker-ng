@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_install:
+	dpkg-parsechangelog --show-field=version --file debian/changelog > eyetracker/version
+	dh_install --sourcedir=.
+override_dh_auto_clean:
+	rm -rf eyetracker/version

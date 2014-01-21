@@ -21,6 +21,8 @@ You can download it by typing in the terminal:
 
 Information about autors can be found on :ref:`authors <authors>` page.
 
+Project eyetracker-ng was funded by University of Warsaw, Faculty of Physics from
+Funds for Didactic Initiatives (FID 2013).
 
 Pages
 -----

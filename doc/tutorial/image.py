@@ -1,6 +1,4 @@
 import eyetracker
-import cv2
-import numpy as np
 
 cam_id = eyetracker.camera.camera.lookForCameras()
 
@@ -11,7 +9,6 @@ while True:
     
     ''' your code '''
 
-    frame = 255 - frame
 
 
     ''' end of your code'''

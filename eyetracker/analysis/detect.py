@@ -31,48 +31,51 @@ def blink():
     pass
 
 def findBestGlints(shape , where_glint , where_pupil , algorithm = 'pupil'):
-    
-    if len(where_glint) < 3:
-        return where_glint
-    elif len(where_glint) > 2 and algorithm == 'centered':
-        result = np.zeros(len(where_glint))
-        center_x = shape[1] / 2.
-        center_y = shape[0] / 2.
-        
-        for ind , value in enumerate(where_glint):
-            result[ind] = np.sqrt( (value[0] - center_x)**2 + (value[1] - center_y)**2 )
-        
-        ind_1 = np.argmin(result)
-        result[ind_1] = shape[1]
-        ind_2 = np.argmin(result)
-        
-        return np.array( [where_glint[ind_1] , where_glint[ind_2]] )
-                        
-    elif len(where_glint) > 2 and algorithm == 'closest':
-        result = []
-        for ind_1 , value_1 in enumerate(where_glint):
-            for ind_2 in range(ind_1+1 , len(where_glint)):
-                value_2 = where_glint[ind_2]
-                
-                result.append( np.sqrt( (value_1[0] - value_2[0])**2 + (value_1[1] - value_2[1])**2 ) )
-        
-        result.sort()
-        return np.array(result[0] , result[1])
-
-    elif len(where_glint) > 2 and algorithm == 'pupil':
-        if where_pupil == None:
+    try:
+        if len(where_glint) < 3:
             return where_glint
-        else:
+        elif len(where_glint) > 2 and algorithm == 'centered':
             result = np.zeros(len(where_glint))
+            center_x = shape[1] / 2.
+            center_y = shape[0] / 2.
             
             for ind , value in enumerate(where_glint):
-                result[ind] = np.sqrt( (value[0] - where_pupil[0][0])**2 + (value[1] - where_pupil[0][1])**2 )
-            
+                result[ind] = np.sqrt( (value[0] - center_x)**2 + (value[1] - center_y)**2 )
+        
             ind_1 = np.argmin(result)
             result[ind_1] = shape[1]
             ind_2 = np.argmin(result)
             
             return np.array( [where_glint[ind_1] , where_glint[ind_2]] )
+                        
+        elif len(where_glint) > 2 and algorithm == 'closest':
+            result = []
+            for ind_1 , value_1 in enumerate(where_glint):
+                for ind_2 in range(ind_1+1 , len(where_glint)):
+                    value_2 = where_glint[ind_2]
+                    
+                    result.append( np.sqrt( (value_1[0] - value_2[0])**2 + (value_1[1] - value_2[1])**2 ) )
+            
+            result.sort()
+            return np.array(result[0] , result[1])
+            
+        elif len(where_glint) > 2 and algorithm == 'pupil':
+            if where_pupil == None:
+                return where_glint
+            else:
+                result = np.zeros(len(where_glint))
+                
+                for ind , value in enumerate(where_glint):
+                    result[ind] = np.sqrt( (value[0] - where_pupil[0][0])**2 + (value[1] - where_pupil[0][1])**2 )
+                
+                ind_1 = np.argmin(result)
+                result[ind_1] = shape[1]
+                ind_2 = np.argmin(result)
+                
+                return np.array( [where_glint[ind_1] , where_glint[ind_2]] )
+                
+    except TypeError:       # means that there is less than 1 glint detected (possibly 0)
+        return where_glint
             
 def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
           blockSize=3):

@@ -84,7 +84,7 @@ def drawPupil(image, thres , pupils_stack , numberOfPupils):
     thresholded = threshold(image, thresh_v=thres)
     where_pupil = pupil(thresholded)
     
-    #where_pupil , pupils_stack = averagePupils(where_pupil , pupils_stack)
+    where_pupil , pupils_stack = averagePupils(where_pupil , pupils_stack)
     
     bgr = gray2bgr(thresholded)
     mark(bgr, where_pupil, color='blue')

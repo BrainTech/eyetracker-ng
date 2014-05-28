@@ -151,7 +151,25 @@ def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20,
                                minRadius=minRadius, maxRadius=maxRadius)
     if circles != None:
         circles = np.uint16(np.around(circles))[0]
+        circles = removeArtificialCircles(circles)
     return circles
+
+def removeArtificialCircles(circles):
+    new_circles = []
+    for circle in circles:
+        if circle[0] <  320 * 0.35 or circle[0] >  320 * 0.65:
+            pass
+        else:
+            if circle[1] <  240 * 0.35 or circle[1] >  240 * 0.65:
+                pass
+            else:
+                new_circles.append(circle)
+    
+    if not new_circles:
+        return None
+    else:
+        new_circles = np.array(new_circles)
+        return new_circles
 
 if __name__ == '__main__':
     from processing import threshold, gray2bgr, bgr2gray, mark

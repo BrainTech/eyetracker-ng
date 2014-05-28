@@ -37,8 +37,128 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
+class Ui_MusicPlayerWindow(object):
+    ''' GUI graphical part for a simple music player.
+
+    Class governing the graphical part of the graphical user interface.
+    It describes only parameters of used widgets, all operational functions
+    are placed in separate class in eyetracker/gui/functional.
+
+    '''
+    def setupUi(self , MusicPlayerWindow):
+        ''' Initialization of all needed widgets.
+
+        '''
+        trueScreen = QtGui.QDesktopWidget().screenGeometry()
+        #print screen.width(), screen.height()
+        screen_width  = 1000
+        screen_height = 700
+        
+        MusicPlayerWindow.setObjectName(_fromUtf8("MusicPlayerWindow"))
+        MusicPlayerWindow.setEnabled(True)
+        MusicPlayerWindow.setGeometry( (trueScreen.width() - screen_width)/2.0 , (trueScreen.height() - screen_height)/2.0, screen_width, screen_height)
+        #MusicPlayerWindow.setMinimumSize(QtCore.QSize(200, 200))
+        #MusicPlayerWindow.setMaximumSize(QtCore.QSize(200, 200))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/camera.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MusicPlayerWindow.setWindowIcon(icon)
+
+        self.centralwidget = QtGui.QWidget(MusicPlayerWindow)
+        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
+
+        text_size_width  = 800
+        text_size_height = 500
+
+
+        self.lbl_text = QtGui.QLabel(self.centralwidget)
+        self.lbl_text.setEnabled(True)
+        pos_x  = (screen_width - text_size_width) / 2.0
+        pos_y  = (screen_height- text_size_height) / 2.0
+        self.lbl_text.setGeometry(QtCore.QRect(pos_x, pos_y, text_size_width, text_size_height))
+        font = QtGui.QFont()
+        font.setBold(False)
+        font.setItalic(True)
+        font.setWeight(75)
+        self.lbl_text.setFont(font)
+        self.lbl_text.setTextFormat(QtCore.Qt.RichText)
+        self.lbl_text.setObjectName(_fromUtf8("lbl_text"))
+        
+
+        self.btn_right = QtGui.QPushButton(self.centralwidget)
+        size_x = (screen_width - text_size_width) / 2.0
+        pos_x  = screen_width- size_x
+        size_y = text_size_height
+        pos_y  = (screen_height- text_size_height) / 2.0
+        self.btn_right.setGeometry(QtCore.QRect(pos_x, pos_y, size_x, size_y))
+        #icon1 = QtGui.QIcon()
+        #icon1.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/start.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        #self.btn_right.setIcon(icon1)
+        self.btn_right.setObjectName(_fromUtf8("btn_right"))
+
+
+        self.btn_left = QtGui.QPushButton(self.centralwidget)
+        size_x = (screen_width - text_size_width) / 2.0
+        pos_x  = 0.0
+        size_y = text_size_height
+        pos_y  = (screen_height- text_size_height) / 2.0
+        self.btn_left.setGeometry(QtCore.QRect(pos_x, pos_y, size_x, size_y))
+        #icon1 = QtGui.QIcon()
+        #icon1.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/start.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        #self.btn_right.setIcon(icon1)
+        self.btn_left.setObjectName(_fromUtf8("btn_left"))
+
+
+        self.btn_up = QtGui.QPushButton(self.centralwidget)
+        size_x = text_size_width
+        pos_x  = (screen_width - text_size_width) / 2.0
+        size_y = (screen_height - text_size_height) / 2.0 
+        pos_y  = 0.0
+        self.btn_up.setGeometry(QtCore.QRect(pos_x, pos_y, size_x, size_y))
+        #icon1 = QtGui.QIcon()
+        #icon1.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/start.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        #self.btn_right.setIcon(icon1)
+        self.btn_up.setObjectName(_fromUtf8("btn_up"))
+
+
+
+        self.btn_down = QtGui.QPushButton(self.centralwidget)
+        size_x = text_size_width
+        pos_x  = (screen_width - text_size_width) / 2.0
+        size_y = (screen_height - text_size_height) / 2.0 
+        pos_y  = (screen_height + text_size_height) / 2.0
+        self.btn_down.setGeometry(QtCore.QRect(pos_x, pos_y, size_x, size_y))
+        #icon1 = QtGui.QIcon()
+        #icon1.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/start.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        #self.btn_right.setIcon(icon1)
+        self.btn_down.setObjectName(_fromUtf8("btn_down"))        
+        
+
+        MusicPlayerWindow.setCentralWidget(self.centralwidget)
+        #self.statusbar = QtGui.QStatusBar(MusicPlayerWindow)
+        #self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        #MusicPlayerWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MusicPlayerWindow)
+        QtCore.QMetaObject.connectSlotsByName(MusicPlayerWindow)
+
+
+        
+    def retranslateUi(self, MusicPlayerWindow):
+        '''Attach names to all widgets set up in setupUi function.
+        '''
+
+        MusicPlayerWindow.setWindowTitle(_translate("MusicPlayerWindow", "Eyetracter -- start", None))
+        self.lbl_text.setText(_translate("MusicPlayerWindow", "siofoihasfoawiuhyefąąąąąąą", None))
+
+
+
+
+
+
+
 class Ui_StartingWindow(object):
-    ''' GUI graphical part.
+    ''' GUI graphical part for the main window.
 
     Class governing the graphical part of the default graphical user interface.
     It describes only parameters of used widgets, all operational functions
@@ -55,7 +175,7 @@ class Ui_StartingWindow(object):
         StartingWindow.setEnabled(True)
         StartingWindow.resize(640, 640)
         StartingWindow.setMinimumSize(QtCore.QSize(640, 640))
-        StartingWindow.setMaximumSize(QtCore.QSize(640, 640))
+        #StartingWindow.setMaximumSize(QtCore.QSize(640, 640))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/camera.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         StartingWindow.setWindowIcon(icon)
@@ -154,28 +274,28 @@ class Ui_StartingWindow(object):
         self.lbl_glint.setObjectName(_fromUtf8("lbl_glint2"))
 
         self.lbl_alpha = QtGui.QLabel(self.centralwidget)
-        self.lbl_alpha.setGeometry(QtCore.QRect(0,0,0,0))#(360, 390, 140, 16))
+        self.lbl_alpha.setGeometry(QtCore.QRect(360, 440, 140, 16))
         self.lbl_alpha.setObjectName(_fromUtf8("lbl_alpha"))
         
         self.led_alpha = QtGui.QLineEdit(self.centralwidget)
-        self.led_alpha.setGeometry(QtCore.QRect(0,0,0,0))#(500, 390, 50, 20))
+        self.led_alpha.setGeometry(QtCore.QRect(500, 440, 50, 20))
         self.led_alpha.setObjectName(_fromUtf8("led_alpha"))
         
-        self.lbl_additional_1 = QtGui.QLabel(self.centralwidget)
-        self.lbl_additional_1.setGeometry(QtCore.QRect(0,0,0,0))#(360, 440, 140, 16))
-        self.lbl_additional_1.setObjectName(_fromUtf8("lbl_additional_1"))
+        self.lbl_pupilStackDeph = QtGui.QLabel(self.centralwidget)
+        self.lbl_pupilStackDeph.setGeometry(QtCore.QRect(360, 470, 140, 16))
+        self.lbl_pupilStackDeph.setObjectName(_fromUtf8("lbl_pupilStackDeph"))
         
-        self.led_additional_1 = QtGui.QLineEdit(self.centralwidget)
-        self.led_additional_1.setGeometry(QtCore.QRect(0,0,0,0))#(500, 440, 50, 20))
-        self.led_additional_1.setObjectName(_fromUtf8("led_additional_1"))
+        self.led_pupilStackDeph = QtGui.QLineEdit(self.centralwidget)
+        self.led_pupilStackDeph.setGeometry(QtCore.QRect(500, 470, 50, 20))
+        self.led_pupilStackDeph.setObjectName(_fromUtf8("led_pupilStackDeph"))
 
-        self.lbl_additional_2 = QtGui.QLabel(self.centralwidget)
-        self.lbl_additional_2.setGeometry(QtCore.QRect(0,0,0,0))#(360, 490, 140, 16))
-        self.lbl_additional_2.setObjectName(_fromUtf8("lbl_additional_2"))
+        self.lbl_decisionStackDeph = QtGui.QLabel(self.centralwidget)
+        self.lbl_decisionStackDeph.setGeometry(QtCore.QRect(360, 500, 140, 16))
+        self.lbl_decisionStackDeph.setObjectName(_fromUtf8("lbl_decisionStackDeph"))
         
-        self.led_additional_2 = QtGui.QLineEdit(self.centralwidget)
-        self.led_additional_2.setGeometry(QtCore.QRect(0,0,0,0))#(500, 490, 50, 20))
-        self.led_additional_2.setObjectName(_fromUtf8("led_additional_2"))
+        self.led_decisionStackDeph = QtGui.QLineEdit(self.centralwidget)
+        self.led_decisionStackDeph.setGeometry(QtCore.QRect(500, 500, 50, 20))
+        self.led_decisionStackDeph.setObjectName(_fromUtf8("led_decisionStackDeph"))
 
         self.cmb_setAlgorithm = QtGui.QComboBox(self.centralwidget)
         self.cmb_setAlgorithm.setGeometry(QtCore.QRect(20, 560, 120, 35))
@@ -205,6 +325,48 @@ class Ui_StartingWindow(object):
         self.btn_save.setIconSize(QtCore.QSize(24, 24))
         self.btn_save.setObjectName(_fromUtf8("btn_save"))
 
+        ### --- ###
+        self.btn_key1 = QtGui.QPushButton(self.centralwidget)
+        self.btn_key1.setGeometry(QtCore.QRect(770, 50, 150, 150))
+        self.btn_key1.setIconSize(QtCore.QSize(24,24))
+        self.btn_key1.setObjectName(_fromUtf8("btn_key1"))
+
+        self.btn_key2 = QtGui.QPushButton(self.centralwidget)
+        self.btn_key2.setGeometry(QtCore.QRect(970, 50, 150, 150))
+        self.btn_key2.setIconSize(QtCore.QSize(24,24))
+        self.btn_key2.setObjectName(_fromUtf8("btn_key2"))
+
+        self.btn_key3 = QtGui.QPushButton(self.centralwidget)
+        self.btn_key3.setGeometry(QtCore.QRect(670, 230, 150, 150))
+        self.btn_key3.setIconSize(QtCore.QSize(24,24))
+        self.btn_key3.setObjectName(_fromUtf8("btn_key3"))
+
+        self.btn_key4 = QtGui.QPushButton(self.centralwidget)
+        self.btn_key4.setGeometry(QtCore.QRect(1070, 230, 150, 150))
+        self.btn_key4.setIconSize(QtCore.QSize(24,24))
+        self.btn_key4.setObjectName(_fromUtf8("btn_key4"))
+
+        self.btn_key5 = QtGui.QPushButton(self.centralwidget)
+        self.btn_key5.setGeometry(QtCore.QRect(770, 400, 150, 150))
+        self.btn_key5.setIconSize(QtCore.QSize(24,24))
+        self.btn_key5.setObjectName(_fromUtf8("btn_key5"))
+
+        self.btn_key6 = QtGui.QPushButton(self.centralwidget)
+        self.btn_key6.setGeometry(QtCore.QRect(970, 400, 150, 150))
+        self.btn_key6.setIconSize(QtCore.QSize(24,24))
+        self.btn_key6.setObjectName(_fromUtf8("btn_key6"))
+
+        #MD string
+        self.lbl_stringTitle = QtGui.QLabel(self.centralwidget)
+        self.lbl_stringTitle.setGeometry(QtCore.QRect(907, 220, 100, 20))
+        self.lbl_stringTitle.setObjectName(_fromUtf8("lbl_stringTitle"))
+
+        self.lbl_stringWritten = QtGui.QLabel(self.centralwidget)
+        self.lbl_stringWritten.setGeometry(QtCore.QRect(870, 230, 100, 100))
+        self.lbl_stringWritten.setObjectName(_fromUtf8("lbl_stringTitle"))
+        ### --- ###
+
+
         self.timer = QtCore.QBasicTimer()
 
         StartingWindow.setCentralWidget(self.centralwidget)
@@ -229,11 +391,31 @@ class Ui_StartingWindow(object):
         self.lbl_pupilDetection.setText(_translate("StartingWindow", "Pupil detection:", None))
         self.lbl_pupilNumber.setText(_translate("StartingWindow", "Number of pupils to track:", None))
         self.lbl_glintDetection.setText(_translate("StartingWindow", "Number of glints to track:", None))
-        self.lbl_alpha.setText(_translate("StartingWindow", "Alpha smoothing:", None))
-        self.lbl_additional_1.setText(_translate("StartingWindow", "Additional_1:", None))
-        self.lbl_additional_2.setText(_translate("StartingWindow", "Additional_2:", None))
+        self.lbl_alpha.setText(_translate("StartingWindow", "Alpha threshold:", None))
+        self.lbl_pupilStackDeph.setText(_translate("StartingWindow", "PupilStackDeph:", None))
+        self.lbl_decisionStackDeph.setText(_translate("StartingWindow", "DecisionStackDeph:", None))
         #self.btn_load.setText(_translate("StartingWindow", "LOAD", None))
         self.btn_save.setText(_translate("StartingWindow", "SAVE", None))
+        
+        self.lbls = {
+        1: "A B C D E F",
+        2: "G H I J K L",
+        3: "M N O P R S",
+        4: "T U W X Y Z",
+        5: "0 1 2 3 4 5",
+        6: "6 7 8 9 _ <"}
+        self.keys = {
+        1: self.btn_key1,
+        2: self.btn_key2,
+        3: self.btn_key3,
+        4: self.btn_key4,
+        5: self.btn_key5,
+        6: self.btn_key6}
+        for keyNo in range(1,7):
+            self.keys[keyNo].setText(_translate("StartingWindow", self.lbls[keyNo], None))
+        #MD string
+        self.lbl_stringTitle.setText(_translate("StartingWindow", "Pisany tekst:", None))
+        self.lbl_stringWritten.setText(_translate("StartingWindow", "", None))
 
 if __name__ == '__main__':
     print 'Using this class without it\'s functional part may be possible, but'

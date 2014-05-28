@@ -49,17 +49,19 @@ if __name__ == '__main__':
             
     print config
     
-    #while(True):
-        #ret, frame = cap.read()
+    ###
+    while(True):
+        ret, frame = cap.read()
         
-        #frame_gray = bgr2gray(frame)
+        frame_gray = bgr2gray(frame)
         
-        #thresh = cv2.getTrackbarPos('threshold', 'camera')
+        thresh = cv2.getTrackbarPos('threshold', 'camera')
         
-        #frame_thresh = threshold(frame_gray, thresh_v=thresh)
+        frame_thresh = threshold(frame_gray, thresh_v=thresh)
 
-        #where_pupil = pupil(frame_thresh, param2=20, minRadius=20)
+        where_pupil = pupil(frame_thresh, param2=20, minRadius=20)
 
 
-        #if cv2.waitKey(1) & 0xFF == ord('q') or len(middles) == 1000:
-            #break
+        if cv2.waitKey(1) & 0xFF == ord('q') or len(middles) == 1000:
+            break
+    ###

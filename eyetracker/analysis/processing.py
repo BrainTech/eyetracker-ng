@@ -191,6 +191,8 @@ def mark(image, where, radius=10, color='red', thickness=3):
     true : True
     '''
     if where != None:
+        #print where
+        
         if len(where.shape) == 1:
             y = where[1]
             x = where[0]

@@ -179,6 +179,9 @@ class Ui_StartingWindow(object):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/camera.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         StartingWindow.setWindowIcon(icon)
+        
+        trueScreen = QtGui.QDesktopWidget().screenGeometry()
+        print trueScreen.width(), trueScreen.height()
 
         self.centralwidget = QtGui.QWidget(StartingWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))

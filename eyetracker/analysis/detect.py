@@ -157,10 +157,10 @@ def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20,
 def removeArtificialCircles(circles):
     new_circles = []
     for circle in circles:
-        if circle[0] <  320 * 0.35 or circle[0] >  320 * 0.65:
+        if circle[0] <  320 * 0.25 or circle[0] >  320 * 0.85:
             pass
         else:
-            if circle[1] <  240 * 0.35 or circle[1] >  240 * 0.65:
+            if circle[1] <  240 * 0.25 or circle[1] >  240 * 0.85:
                 pass
             else:
                 new_circles.append(circle)

@@ -88,7 +88,7 @@ class MyForm(QtGui.QMainWindow):
         self.defaults                    = {}
         self.defaults['Mirrored']        = 0
         self.defaults['Fliped']          = 0
-        self.defaults['Alpha']           = 0.6
+        self.defaults['Alpha']           = 0.8
         self.defaults['ResolutionIndex'] = 1
         self.defaults['PupilBar']        = 0
         self.defaults['NumberOfGlints']  = 2
@@ -96,7 +96,7 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['Sampling']        = 30.0
         self.defaults['AlgorithmIndex']  = 0
         self.defaults['PupilStackDeph']  = 100.
-        self.defaults['DecisionStackDeph'] = 6.
+        self.defaults['DecisionStackDeph'] = 10.
         
         self.initializeFlags()
         
@@ -132,12 +132,12 @@ class MyForm(QtGui.QMainWindow):
         except KeyError:
             print 'No camera device detected.'
 
-        self.glints_stack = np.zeros([self.config['Alpha'],3])
-        self.pupils_stack = np.zeros([self.config['Alpha'],3])
+        self.glints_stack = np.zeros([6,3])
+        self.pupils_stack = np.zeros([6,3])
         #print self.pupils_stack.shape
         
         self.pupilPositionsStack = []
-        self.DecisionPupilPositionsStack = []
+        self.decisionPupilPositionsStack = []
 
         self.ui.timer.start(1000/self.config['Sampling'], self)
         self.timer_on = False
@@ -187,12 +187,14 @@ class MyForm(QtGui.QMainWindow):
         ######
         if self.startFlag == 1 and self.where_pupil != None:
             if len(self.pupilPositionsStack) == self.config['PupilStackDeph']:
-                self.pupilPositionsStack.pop(0)
-            self.pupilPositionsStack.append(self.where_pupil)
+                pass
+                #self.pupilPositionsStack.pop(0)
+            else:
+                self.pupilPositionsStack.append(self.where_pupil)
         ######
-            if len(self.DecisionPupilPositionsStack) == self.config['DecisionStackDeph']:
-                self.DecisionPupilPositionsStack.pop(0)
-            self.DecisionPupilPositionsStack.append(self.where_pupil)
+            if len(self.decisionPupilPositionsStack) == self.config['DecisionStackDeph']:
+                self.decisionPupilPositionsStack.pop(0)
+            self.decisionPupilPositionsStack.append(self.where_pupil)
         ######
         
         self.runEyetracker()
@@ -643,7 +645,66 @@ class MyForm(QtGui.QMainWindow):
         elif self.spellerFlag == 1 and self.startFlag == 0:
             self.resize(640,640)
             self.spellerFlag = 0
+        
+        elif self.spellerFlag == 1 and self.startFlag == 1:
+            wybor   = np.array(self.decisionPupilPositionsStack)
+            prog        = np.array(self.pupilPositionsStack)
+            if prog.ndim == 3 and wybor.size != 0:       # tylko gdy są niepuste    
+                
+                #print prog.ndim
+                #print prog.size , wybor.size
+                #print wybor.shape , prog.shape
+                
+                tmp     = wybor.mean(0)[0]
+                wybor_x = tmp[0]
+                wybor_y = tmp[1]
+                
+                tmp         = prog.max(0)[0]
+                prog_right  = tmp[0] * self.config['Alpha']
+                prog_up     = tmp[1] * self.config['Alpha']
+                
+                tmp        = prog.min(0)[0]
+                prog_left  = tmp[0] * self.config['Alpha']
+                prog_down  = tmp[1] * self.config['Alpha']
             
+            
+                if wybor_x > prog_right:
+                    print '>>>'
+                elif wybor_x < prog_left:
+                    print '<<<'
+                else:
+                    pass
+            
+                if wybor_y > prog_up:
+                    print '^^^'
+                elif wybor_y < prog_down:
+                    print 'vvv'
+                else:
+                    pass           
+            
+                print 'Aktualnie x={}, y={}.'.format(wybor_x , wybor_y)
+                print 'Progi wynoszą r={}, l={}, u={}, d={}.'.format(prog_right , prog_left , prog_up , prog_down)
+                print 'Mam już {} próbek dla progów.'.format(len(self.pupilPositionsStack))
+                print 'Mam już {} ostatnich pozycji.'.format(len(self.decisionPupilPositionsStack))
+                
+                if len(self.pupilPositionsStack) == self.config['PupilStackDeph']:
+                    if wybor_x > prog_right:
+                        if wybor_y > prog_up:
+                            self.keyButtonClicked(2)
+                        elif wybor_y < prog_down:
+                            self.keyButtonClicked(1)
+                        else:
+                            self.keyButtonClicked(4)
+                    elif wybor_x < prog_left:
+                        if wybor_y > prog_up:
+                            self.keyButtonClicked(6)
+                        elif wybor_y < prog_down:
+                            self.keyButtonClicked(5)
+                        else:
+                            self.keyButtonClicked(3)
+                    else:
+                        pass
+        
     def keyButtonClicked(self, clickedButtonNo):
         ''' Handles the behavior of the keyboard button.
         #MD k-board
@@ -677,4 +738,4 @@ class MyForm(QtGui.QMainWindow):
         ''' 
         self.spellerLvl = 0
         for buttonNo in range(1,7):
-            self.ui.keys[buttonNo].setText(self.ui.lbls[buttonNo])       
+            self.ui.keys[buttonNo].setText(self.ui.lbls[buttonNo])    

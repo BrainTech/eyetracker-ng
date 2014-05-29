@@ -275,6 +275,8 @@ def averagePupils(where_pupil , pupils_stack):
             
     except AttributeError:      # it means no pupil was found
         pass
+    #except ValueError:          # nie wiem dlaczego, ale tu się czasem wali
+     #   pass
     
     return where_pupil , pupils_stack
 

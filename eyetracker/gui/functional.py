@@ -35,6 +35,18 @@ from ..camera.camera import Camera
 from .graphical import Ui_StartingWindow
 
 import os
+from functools import partial
+
+
+class MyTextViewer(QtGui.QMainWindow):
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.ui = Ui_MusicPlayerWindow()
+        self.ui.setupUi(self)
+        
+    def closeEvent(self, event):
+        event.accept()
+        
 
 class MyForm(QtGui.QMainWindow):
     ''' Functional part of GUI interface.
@@ -76,28 +88,41 @@ class MyForm(QtGui.QMainWindow):
         self.defaults                    = {}
         self.defaults['Mirrored']        = 0
         self.defaults['Fliped']          = 0
-        self.defaults['Alpha']           = 6.
+        self.defaults['Alpha']           = 0.8
         self.defaults['ResolutionIndex'] = 1
         self.defaults['PupilBar']        = 0
         self.defaults['NumberOfGlints']  = 2
         self.defaults['NumberOfPupils']  = 1
         self.defaults['Sampling']        = 30.0
         self.defaults['AlgorithmIndex']  = 0
-        self.defaults['Additional_1']    = 1.
-        self.defaults['Additional_2']    = 1.
+        self.defaults['PupilStackDeph']  = 100.
+        self.defaults['DecisionStackDeph'] = 10.
         
-        self.tmp = 'notgo'
+        self.initializeFlags()
+        
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
-        #self.algorithms = ['NESW' , 'Raw output']
-        self.algorithms = ['Raw output']
-        for algorithm in self.algorithms:
+            
+        self.algorithms = {}
+        self.algorithms['Raw output']   = self.module_raw
+        self.algorithms['Keyboard']  = self.module_speller
+        self.algorithms['Picture viewer']  = self.module_picture
+        
+        #self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
+        
+        print self.algorithms.keys()
+        
+        for algorithm in self.algorithms.keys():
+            print algorithm
             self.ui.cmb_setAlgorithm.addItem(algorithm)
+            
+        
         self.resolutions_w = [160,320,640,1280]
         self.resolutions_h = [120,240,480,720]
         for w, h in izip(self.resolutions_w, self.resolutions_h):
             self.ui.cmb_setResolution.addItem(''.join([str(w), 'x', str(h)]))
+            
         self.loadSettings()
         self.setWidgetsState()
 
@@ -111,8 +136,12 @@ class MyForm(QtGui.QMainWindow):
         except KeyError:
             print 'No camera device detected.'
 
-        self.glints_stack = np.zeros([self.config['Alpha'],3])
-        self.pupils_stack = np.zeros([self.config['Alpha'],3])
+        self.glints_stack = np.zeros([6,3])
+        self.pupils_stack = np.zeros([6,3])
+        #print self.pupils_stack.shape
+        
+        self.pupilPositionsStack = []
+        self.decisionPupilPositionsStack = []
 
         self.ui.timer.start(1000/self.config['Sampling'], self)
         self.timer_on = False
@@ -129,8 +158,11 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_pupil2.valueChanged[int].connect(self.hsbPupilNumber_Change)
         self.ui.hsb_glint.valueChanged[int].connect(self.hsbGlint_Change)
         self.ui.led_alpha.editingFinished.connect(self.alphaChange)
-        self.ui.led_additional_1.editingFinished.connect(self.additional_1Change)
-        self.ui.led_additional_2.editingFinished.connect(self.additional_2Change)
+        self.ui.led_pupilStackDeph.editingFinished.connect(self.pupilStackDephChange)
+        self.ui.led_decisionStackDeph.editingFinished.connect(self.decisionStackDephChange)
+        
+        #for buttonNo in range(1,7):
+        #    self.ui.keys[buttonNo].clicked.connect(partial(self.keyButtonClicked, clickedButtonNo = buttonNo))
 
     def timerEvent(self, event):
         ''' Function controlling the main flow of this gui.
@@ -156,12 +188,19 @@ class MyForm(QtGui.QMainWindow):
         self.pupilUpdate(self.im)
         self.glintUpdate(self.im)
         
-        #print self.where_pupil
-        #print self.where_pupil.shape[0]
-        
         self.runEyetracker()
         
         self.update()
+        
+    def initializeFlags(self):
+        #self.musicPlayerFlag = 0
+        self.startFlag       = 0
+        
+        #self.textViewerFlag  = 0
+        self.pictureViewerFlag  = 0
+    
+        self.spellerFlag    = 0
+        #self.spellerLvl     = 0
 
     def setDefaultSettings(self):
         ''' Set GUI defaul configuration.
@@ -178,8 +217,8 @@ class MyForm(QtGui.QMainWindow):
         self.config['NumberOfPupils']  = self.defaults['NumberOfPupils']
         self.config['Sampling']        = self.defaults['Sampling']
         self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
-        self.config['Additional_1']    = self.defaults['Additional_1']
-        self.config['Additional_2']    = self.defaults['Additional_2']
+        self.config['PupilStackDeph']    = self.defaults['PupilStackDeph']
+        self.config['DecisionStackDeph']    = self.defaults['DecisionStackDeph']
 
     def setWidgetsState(self):
         ''' Set state of gui widgets according to self.config variable.
@@ -246,19 +285,19 @@ class MyForm(QtGui.QMainWindow):
             warningFlag = True
         
         try:
-            self.ui.led_additional_1.setText(str(self.config['Additional_1']))
+            self.ui.led_pupilStackDeph.setText(str(self.config['PupilStackDeph']))
         except KeyError:
-            self.config['Additional_1'] = self.defaults['Additional_1']
-            self.ui.led_additional_1.setText(str(self.config['Additional_1']))
-            print 'Additional_1 parameter not present in configuration file -- loading default values.'
+            self.config['PupilStackDeph'] = self.defaults['PupilStackDeph']
+            self.ui.led_pupilStackDeph.setText(str(self.config['PupilStackDeph']))
+            print 'PupilStackDeph parameter not present in configuration file -- loading default values.'
             warningFlag = True
             
         try:
-            self.ui.led_additional_2.setText(str(self.config['Additional_2']))
+            self.ui.led_decisionStackDeph.setText(str(self.config['DecisionStackDeph']))
         except KeyError:
-            self.config['Additional_2'] = self.defaults['Additional_2']
-            self.ui.led_additional_2.setText(str(self.config['Additional_2']))
-            print 'Additional_2 parameter not present in configuration file -- loading default values.'
+            self.config['DecisionStackDeph'] = self.defaults['DecisionStackDeph']
+            self.ui.led_decisionStackDeph.setText(str(self.config['DecisionStackDeph']))
+            print 'DecisionStackDeph parameter not present in configuration file -- loading default values.'
             warningFlag = True
             
         if warningFlag == True:
@@ -393,65 +432,65 @@ class MyForm(QtGui.QMainWindow):
             print 'Alpha should be a floating point number!'
             return
         
-        if alpha < 0. or alpha > 10.:
+        if alpha < 0. or alpha > 1.:
             self.ui.led_alpha.setText( str(self.config['Alpha']) )
-            print 'Alpha should be between 0.0 and 10.0!'
+            print 'Alpha should be between 0.0 and 1.0!'
         else:
             self.config['Alpha'] = alpha
             
         self.glints_stack = np.zeros([self.config['Alpha'],3])
         self.pupils_stack = np.zeros([self.config['Alpha'],3])
 
-    def additional_1Change(self):
+    def pupilStackDephChange(self):
         '''
-        Set a chosen additional_1 parameter for some purposes.
+        Set a chosen pupilStackDeph parameter for some purposes.
         
-        What is additional_1 --> Sasha
+        What is pupilStackDeph --> Sasha
         
         value : string
-            value to be assigned to additional_1 parameter. It would be converted
+            value to be assigned to pupilStackDeph parameter. It would be converted
             to np.float32
         '''
         try:
-            additional_1 = float(self.ui.led_additional_1.text())
+            pupilStackDeph = float(self.ui.led_pupilStackDeph.text())
         except ValueError:
-            self.ui.led_additional_1.setText( str(1) )                          # for now...
-            #self.ui.led_additional_1.setText( str(self.config['Alpha']) )      # in future
-            print 'Additional_1 should be a floating point number!'
+            self.ui.led_pupilStackDeph.setText( str(1) )                          # for now...
+            #self.ui.led_pupilStackDeph.setText( str(self.config['Alpha']) )      # in future
+            print 'PupilStackDeph should be a floating point number!'
             return
         
-        if additional_1 < 0. or additional_1 > 10.:
-            self.ui.led_additional_1.setText( str(1) )                          # for now...
+        if pupilStackDeph < 10. or pupilStackDeph > 300.:
+            self.ui.led_pupilStackDeph.setText( str(100.) )                          # for now...
             #self.ui.led_alpha.setText( str(self.config['Alpha']) )             # in future
-            print 'Additional_1 should be between 0.0 and 10.0!'
+            print 'PupilStackDeph should be between 10.0 and 300.0!'
         else:
-            #self.config['Additional_1'] = alpha                                # in future
+            #self.config['PupilStackDeph'] = alpha                                # in future
             pass
             
-    def additional_2Change(self):
+    def decisionStackDephChange(self):
         '''
-        Set a chosen additional_2 parameter for some purposes.
+        Set a chosen decisionStackDeph parameter for some purposes.
         
-        What is additional_2 --> Sasha
+        What is decisionStackDeph --> Sasha
         
         value : string
-            value to be assigned to additional_1 parameter. It would be converted
+            value to be assigned to decisionStackDeph parameter. It would be converted
             to np.float32
         '''
         try:
-            additional_2 = float(self.ui.led_additional_2.text())
+            decisionStackDeph = float(self.ui.led_decisionStackDeph.text())
         except ValueError:
-            self.ui.led_additional_2.setText( str(1) )                          # for now...
-            #self.ui.led_additional_2.setText( str(self.config['Alpha']) )      # in future
-            print 'Additional_1 should be a floating point number!'
+            self.ui.led_decisionStackDeph.setText( str(1) )                          # for now...
+            #self.ui.led_decisionStackDeph.setText( str(self.config['Alpha']) )      # in future
+            print 'PupilStackDeph should be a floating point number!'
             return
         
-        if additional_2 < 0. or additional_2 > 10.:
-            self.ui.led_additional_2.setText( str(1) )                          # for now...
+        if decisionStackDeph < 0. or decisionStackDeph > 30.:
+            self.ui.led_decisionStackDeph.setText( str(6) )                          # for now...
             #self.ui.led_alpha.setText( str(self.config['Alpha']) )             # in future
-            print 'Additional_2 should be between 0.0 and 10.0!'
+            print 'DecisionStackDeph should be between 0.0 and 10.0!'
         else:
-            #self.config['Additional_2'] = alpha                                # in future
+            #self.config['DecisionStackDeph'] = alpha                                # in future
             pass
 
     def hsbPupil_Change(self, value):
@@ -520,7 +559,6 @@ class MyForm(QtGui.QMainWindow):
             standard event handler as described in QT4 documentation.
 
         '''
-
         painter = QtGui.QPainter(self)
 
         if self.timer_on:
@@ -544,17 +582,40 @@ class MyForm(QtGui.QMainWindow):
         ''' Handles the behavior of the start/stop button, based on parameters picked from gui.
         '''
         
-        if self.tmp == 'notgo':
-            self.tmp = 'go'
+        if self.startFlag == 0:
+            self.startFlag = 1
             self.ui.btn_start.setText('Stop')
         else:
-            self.tmp = 'notgo'
+            self.startFlag = 0
+            #self.pupilPositionsStack = []
             self.ui.btn_start.setText('Start')
+            
+            
             
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
+        if self.startFlag == 1:
+            self.algorithms[ str(self.ui.cmb_setAlgorithm.currentText()) ]()
+        else:
+            pass
+       
+       
+       
+    def module_raw(self):
+        #if self.startFlag == 1:
+        print 'Pupil coordinates: {}.'.format(self.where_pupil)
+        print 'Glint coordinates: {}.'.format(self.where_glint)
         
-        if self.config['AlgorithmIndex'] == 1 and self.tmp == 'go':
-            print 'Pupil coordinates: {}.'.format(self.where_pupil)
-            print 'Glint coordinates: {}.'.format(self.where_glint)
+    def module_picture(self):
+        pass
+    
+    def module_speller(self):
+        if self.spellerFlag == 0 and self.startFlag == 1:
+            self.spellerFlag = 1
+        elif self.spellerFlag == 1 and self.startFlag == 0:
+            self.spellerFlag = 0
+        
+        elif self.spellerFlag == 1 and self.startFlag == 1:
+            print 'działam!'
+            

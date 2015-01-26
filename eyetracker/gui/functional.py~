@@ -587,8 +587,8 @@ class MyForm(QtGui.QMainWindow):
 
         self.ui.timer.stop()
         self.camera.close()
-        #self.glints_stack = np.zeros([self.config['Alpha'],3])
-        #self.pupils_stack = np.zeros([self.config['Alpha'],3])
+        self.glints_stack = np.zeros([self.config['Alpha'],3])
+        self.pupils_stack = np.zeros([self.config['Alpha'],3])
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
         self.camera = Camera(self.cameras[self.selectedCamera], 
                              {3 : self.w, 4 : self.h})

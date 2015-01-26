@@ -64,7 +64,7 @@ class Ui_StartingWindow(object):
         if system() == 'Windows':
             iconPath = abspath(_fromUtf8("pictures/camera.png"))
         else:
-            iconPath = _fromUtf8("pictures/camera.svg")
+            iconPath = abspath(_fromUtf8("pictures/camera.svg"))
         icon.addPixmap(QtGui.QPixmap(iconPath), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         StartingWindow.setWindowIcon(icon)
         
@@ -112,7 +112,7 @@ class Ui_StartingWindow(object):
         if system() == 'Windows':
             iconPath = abspath(_fromUtf8("pictures/start.png"))
         else:
-            iconPath = _fromUtf8("pictures/start.svg")
+            iconPath = abspath(_fromUtf8("pictures/start.svg"))
         icon1.addPixmap(QtGui.QPixmap(iconPath), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_start.setIcon(icon1)
         self.btn_start.setIconSize(QtCore.QSize(24, 24))
@@ -130,7 +130,7 @@ class Ui_StartingWindow(object):
         if system() == 'Windows':
             iconPath = abspath(_fromUtf8("pictures/clear.png"))
         else:
-            iconPath = _fromUtf8("pictures/clear.svg")
+            iconPath = abspath(_fromUtf8("pictures/clear.svg"))
         icon5.addPixmap(QtGui.QPixmap(iconPath), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_clear.setIcon(icon5)
         self.btn_clear.setIconSize(QtCore.QSize(24, 24))
@@ -143,7 +143,7 @@ class Ui_StartingWindow(object):
         if system() == 'Windows':
             iconPath = abspath(_fromUtf8("pictures/save.png"))
         else:
-            iconPath = _fromUtf8("pictures/save.svg")
+            iconPath = abspath(_fromUtf8("pictures/save.svg"))
         icon4.addPixmap(QtGui.QPixmap(iconPath), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_save.setIcon(icon4)
         self.btn_save.setIconSize(QtCore.QSize(24, 24))

@@ -24,7 +24,10 @@ from cv2 import namedWindow, CV_WINDOW_AUTOSIZE, imshow, waitKey
 from ..analysis.detect import pupil, glint, findBestGlints
 from ..analysis.processing import threshold, mark, gray2bgr, bgr2gray, averageGlints , averagePupils
 
-def drawGlint(image , where_pupil , numberOfGlints , glints_stack):
+#import numpy as np
+#from scipy import ndimage
+
+def drawGlint(image , where_pupil , numberOfGlints , glints_stack , flag):
     ''' Find and draw glint on image.
 
     Function takes an image, converts it to grayscale if it is not,
@@ -47,20 +50,38 @@ def drawGlint(image , where_pupil , numberOfGlints , glints_stack):
     '''
     if len(image.shape) == 3:
         image = bgr2gray(image)
-        
+    
     where_glint = glint(image , numberOfGlints)
     
-    where_glint = findBestGlints(image.shape , where_glint , where_pupil)
-    
+    where_glint = findBestGlints(image.shape , where_glint , where_pupil , flag)
     
     where_glint , glints_stack = averageGlints(where_glint , glints_stack)
+    
+        
     
     
     bgr = gray2bgr(image)
     mark(bgr, where_glint)
     return bgr, where_glint , glints_stack
 
-def drawPupil(image, thres , pupils_stack , numberOfPupils):
+
+
+
+
+# def dodaj_kolo(ob, x,y, r):
+#     '''dodaje koło wypełnione 1 do obrazu binarnego ob. 
+#     x, y - środek
+#     r - promień '''
+#     r2=r**2
+#     for xi in range(ob.shape[0]):
+#         for yi in range(ob.shape[1]):
+#             if (xi-x)**2+(yi-y)**2<=r2:
+#                 ob[xi,yi]=1
+#     return ob
+
+
+
+def drawPupil(image, thres , pupils_stack):
     ''' Find and draw pupil on image.
 
     Function takes an image, applies 'trunc' threshold(cv2.THRESH_TRUNC),
@@ -81,7 +102,26 @@ def drawPupil(image, thres , pupils_stack , numberOfPupils):
     '''
     if len(image.shape) == 3:
         image = bgr2gray(image)
+        
     thresholded = threshold(image, thresh_v=thres)
+    
+    thresholded = threshold(thresholded , thresh_v=20 , max_v=255 , thresh_type='zero')
+    
+    #print image.shape
+    
+    #thresholded = np.zeros(image.shape , dtype='uint8')
+    #print thresholded.shape
+    
+    #thresholded[np.where(image > thres)] = 1
+    
+    #ob = np.zeros([16,16])
+    #ob = dodaj_kolo(ob,8,8,8)
+    
+    #thresholded = ndimage.binary_dilation(thresholded, structure = ob).astype(thresholded.dtype)
+    #thresholded = ndimage.binary_erosion(thresholded, structure = ob).astype(thresholded.dtype)
+    
+
+    
     where_pupil = pupil(thresholded)
     
     #where_pupil , pupils_stack = averagePupils(where_pupil , pupils_stack)

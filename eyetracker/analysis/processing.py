@@ -65,7 +65,7 @@ def gray2bgr(imageGRAY):
     '''
     return cv2.cvtColor(imageGRAY, cv2.COLOR_GRAY2BGR)
 
-def threshold(image, thresh_v=30, max_v=255, thresh_type='trunc'):
+def threshold(image, thresh_v=30, max_v=255, thresh_type='trunc'):  #zero_inv
     ''' Threshold the image.
 
     For corresponding threshold types description see docs.opencv.org:
@@ -257,6 +257,7 @@ def averageGlints(where_glint , glints_stack):
     return where_glint , glints_stack
 
 def averagePupils(where_pupil , pupils_stack):
+    return where_pupil
     try:
         if where_pupil.shape[0] == 1:
             #print '!!!'

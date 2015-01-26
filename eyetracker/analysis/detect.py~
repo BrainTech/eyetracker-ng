@@ -40,13 +40,13 @@ def findBestGlints(shape , where_glint , where_pupil , flag , algorithm = 'pupil
             center_y = shape[0] / 2.
             
             for ind , value in enumerate(where_glint):
-                result[ind] = np.sqrt((value[0] - center_x)**2 + (value[1] - center_y)**2)
+                result[ind] = np.sqrt( (value[0] - center_x)**2 + (value[1] - center_y)**2 )
         
             ind_1 = np.argmin(result)
             result[ind_1] = shape[1]
             ind_2 = np.argmin(result)
             
-            return np.array([where_glint[ind_1] , where_glint[ind_2]])
+            return np.array( [where_glint[ind_1] , where_glint[ind_2]] )
                         
         elif len(where_glint) > 2 and algorithm == 'closest':
             result = []

@@ -22,6 +22,7 @@
 
 from cv2 import VideoCapture
 from glob import iglob
+from platform import system
 
 def lookForCameras():
     ''' Function looks for cameras available cameras.
@@ -33,7 +34,14 @@ def lookForCameras():
         is an int corresponding to the camera that should be passed on
         to cv2.VideoCapture or to class Camera from eyetracker.camera.camera.
     '''
-    listOfCameras = {''.join(['Camera_', str(i+1)]) : int(i)
+    
+    if system() == 'Windows':
+        listOfCameras = {}
+        listOfCameras['Camera_1'] = 0
+        listOfCameras['Camera_2'] = 1
+        # FUU!
+    else:
+        listOfCameras = {''.join(['Camera_', str(i+1)]) : int(i)
                      for i, cam in enumerate(iglob('/dev/video*'))}
     return listOfCameras
 

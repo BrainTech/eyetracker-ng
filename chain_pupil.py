@@ -36,7 +36,7 @@ def nothing(x):
 
 cam_id = camera.lookForCameras()
 cams = cam_id.keys()
-cam = camera.Camera(cam_id['Camera_2'])
+cam = camera.Camera(cam_id['Camera_1'])
 cam_nr = 0
 window = 'decide on the name'
 

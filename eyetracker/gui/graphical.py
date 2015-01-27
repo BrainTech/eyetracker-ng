@@ -375,7 +375,7 @@ class Ui_StartingWindow(object):
         '''Attach names to all widgets set up in setupUi function.
         '''
 
-        StartingWindow.setWindowTitle(_translate("StartingWindow", "Eyetracter -- start" + eyetracker.version, None))
+        StartingWindow.setWindowTitle(_translate("StartingWindow", "Eyetracker -- start" + eyetracker.version, None))
         
         self.lbl_title.setText(_translate("StartingWindow", "Eyetracker " + eyetracker.version, None))
         self.lbl_pupilDetection.setText(_translate("StartingWindow", "Pupil detection threshold:", None))
@@ -452,7 +452,7 @@ class Ui_CursorCalibrationWindow(object):
         '''Attach names to all widgets set up in setupUi function.
         '''
 
-        StartingWindow.setWindowTitle(_translate("CursorCalibrationWindow", "Eyetracter -- cursor calibration" + eyetracker.version, None))
+        StartingWindow.setWindowTitle(_translate("CursorCalibrationWindow", "Eyetracker -- cursor calibration" + eyetracker.version, None))
 
 
 
@@ -503,7 +503,7 @@ class Ui_NeswCalibrationWindow(object):
         '''Attach names to all widgets set up in setupUi function.
         '''
 
-        StartingWindow.setWindowTitle(_translate("NeswCalibrationWindow", "Eyetracter -- NESW calibration" + eyetracker.version, None))
+        StartingWindow.setWindowTitle(_translate("NeswCalibrationWindow", "Eyetracker -- NESW calibration" + eyetracker.version, None))
 
 ###################################################################################################################################################
 
@@ -620,7 +620,7 @@ class Ui_NeswSpellerWindow(object):
         '''Attach names to all widgets set up in setupUi function.
         '''
 
-        StartingWindow.setWindowTitle(_translate("NeswSpellerWindow", "Eyetracter -- NESW speller" + eyetracker.version, None))
+        StartingWindow.setWindowTitle(_translate("NeswSpellerWindow", "Eyetracker -- NESW speller" + eyetracker.version, None))
 #         self.btn_1.setText(_translate("btn_1", "A Ä„ B C Ä† D", None))
 #         self.btn_2.setText(_translate("btn_2", "E Ä� F G H I", None))
 #         self.btn_3.setText(_translate("btn_3", "J K L Ĺ� M N", None))

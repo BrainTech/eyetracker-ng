@@ -202,7 +202,6 @@ def mark(image, where, radius=10, color='red', thickness=3):
                 if len(coordinates) == 3:
                     radius = coordinates[2]
                 cv2.circle(image, (x, y), radius, colors[color], thickness)
-
     return True
 
 def find_purkinje(purkinje1, purkinje2):
@@ -248,33 +247,24 @@ def runningAverage(image, average, alpha):
     '''
     average = np.float32(average)
     cv2.accumulateWeighted(image, average, alpha)
-    #print 'Alpha value is {}.'.format(alpha)
     image = cv2.convertScaleAbs(average)
-
     return image
 
 def averageGlints(where_glint , glints_stack):
     return where_glint , glints_stack
 
 def averagePupils(where_pupil , pupils_stack):
-    return where_pupil
     try:
         if where_pupil.shape[0] == 1:
-            #print '!!!'
-            #print pupils_stack.shape
-            #print where_pupil.shape
             pupils_stack = np.vstack((pupils_stack , where_pupil))[1:,:]
-            #print pupils_stack
             
             where_pupil[0,0] = pupils_stack[:,0].mean()
             where_pupil[0,1] = pupils_stack[:,1].mean()
             where_pupil[0,2] = pupils_stack[:,2].mean()
         else:
             pass
-            
     except AttributeError:      # it means no pupil was found
         pass
-    
     return where_pupil , pupils_stack
 
 if __name__ == '__main__':
